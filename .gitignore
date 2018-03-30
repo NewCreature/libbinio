@@ -19,6 +19,7 @@ config.mif
 libbinio.pc
 .deps
 .libs
+*.a
 src/binio.h
 src/config.h
 src/config.h.in
