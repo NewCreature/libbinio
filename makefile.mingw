@@ -1,0 +1,24 @@
+# MinGW Environment Setup
+MINGW_PREFIX = C:\\MinGW
+
+CFLAGS = -Dstricmp=strcasecmp -Isrc -O2
+CXXFLAGS = $(CFLAGS)
+
+LIBBINIO_OBJECTS = src\\binfile.o src\\binio.o src\\binstr.o src\\binwrap.o
+
+libbinio.a: src\\binio.h $(LIBBINIO_OBJECTS)
+	-ar rs libbinio.a $(LIBBINIO_OBJECTS)
+
+src\\binio.h: src\\binio.h.mingw
+	copy /y src\\binio.h.mingw src\\binio.h
+
+clean:
+	del /y $(LIBBINIO_OBJECTS) src\\binio.h
+
+install: libbinio.a
+	copy /y libbinio.a $(MINGW_PREFIX)\\lib
+	if not exist "$(MINGW_PREFIX)\\include\\binio" md $(MINGW_PREFIX)\\include\\binio
+	copy /y src\\binfile.h $(MINGW_PREFIX)\\include\\binio
+	copy /y src\\binio.h $(MINGW_PREFIX)\\include\\binio
+	copy /y src\\binstr.h $(MINGW_PREFIX)\\include\\binio
+	copy /y src\\binwrap.h $(MINGW_PREFIX)\\include\\binio
