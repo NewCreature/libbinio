@@ -1,0 +1,38 @@
+# Linux Environment Setup
+LINUX_PREFIX = /usr/local
+
+# Build Configuration
+BINIO_ENABLE_STRING = 1
+BINIO_ENABLE_IOSTREAM = 0
+BINIO_ISO_STDLIB = 0
+BINIO_WITH_MATH = 1
+
+CC = gcc
+CXX = g++
+CFLAGS = -Isrc -O2
+CXXFLAGS = $(CFLAGS)
+
+LIBBINIO_OBJECTS = src/binfile.o src/binio.o src/binstr.o src/binwrap.o
+
+libbinio.a: src/binio.h $(LIBBINIO_OBJECTS)
+	-ar rs libbinio.a $(LIBBINIO_OBJECTS)
+
+src/binio.h: src/binio.h.in
+	cp src/binio.h.in src/binio.h
+	sed -i "s|@ENABLE_STRING@|$(BINIO_ENABLE_STRING)|" src/binio.h
+	sed -i "s|@ENABLE_IOSTREAM@|$(BINIO_ENABLE_IOSTREAM)|" src/binio.h
+	sed -i "s|@ISO_STDLIB@|$(BINIO_ISO_STDLIB)|" src/binio.h
+	sed -i "s|@WITH_MATH@|$(BINIO_WITH_MATH)|" src/binio.h
+	sed -i "s|@TYPE_INT@|long|" src/binio.h
+	sed -i "s|@TYPE_FLOAT@|double|" src/binio.h
+
+clean:
+	rm -rf $(LIBBINIO_OBJECTS) src/binio.h
+
+install: libbinio.a
+	cp libbinio.a $(LINUX_PREFIX)/lib
+	mkdir -p $(LINUX_PREFIX)/include/binio
+	cp src/binfile.h $(LINUX_PREFIX)/include/binio
+	cp src/binio.h $(LINUX_PREFIX)/include/binio
+	cp src/binstr.h $(LINUX_PREFIX)/include/binio
+	cp src/binwrap.h $(LINUX_PREFIX)/include/binio
